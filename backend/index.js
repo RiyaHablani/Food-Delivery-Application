@@ -41,10 +41,10 @@ const __dirname2 = path.resolve(); // Resolves to the root folder
 
 if (nodeEnv === "production") {
   // Serve static files from the frontend's build directory, which is in the main folder
-  app.use(express.static(path.join(__dirname2, "../build"))); // Correct the path
+  app.use(express.static(path.join(__dirname2, "./build"))); // Correct the path
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname2, "../build", "index.html")); // Correct the path here too
+    res.sendFile(path.resolve(__dirname2, "./build", "index.html")); // Correct the path here too
   });
 } else {
   app.get("/", (req, res) => {
