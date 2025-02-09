@@ -1,17 +1,9 @@
 const path = require("path");
 const express = require("express");
-require("dotenv").config(); // Load environment variables from .env file
 
-// Define environment variables from the .env file
-const port = process.env.PORT || 5000; // Default to 5000 if not set
-const nodeEnv = process.env.NODE_ENV || "development"; // Default to 'development' if not set
-const frontendBaseUrl =
-  process.env.VITE_REACT_APP_BACKEND_BASEURL || "http://localhost:3000"; // Access the base URL from the .env file
-
-// Log the environment variables
-console.log(`NODE_ENV: ${nodeEnv}`);
-console.log(`PORT: ${port}`);
-console.log(`Frontend Base URL: ${frontendBaseUrl}`);
+// Directly set the environment variables
+process.env.NODE_ENV = "production";
+process.env.PORT = 5000;
 
 global.foodData = require("./db")(function call(err, data, CatData) {
   if (err) console.log(err);
@@ -20,10 +12,11 @@ global.foodData = require("./db")(function call(err, data, CatData) {
 });
 
 const app = express();
+const port = process.env.PORT || 5000; // Use environment variable for port if available
 
 // CORS setup
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", frontendBaseUrl); // Use the frontend base URL
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -40,14 +33,13 @@ app.use("/api", require("./Routes/CreateUser"));
 app.use("/api", require("./Routes/DisplayData"));
 
 //-----------------Deployment------------------
-const __dirname2 = path.resolve(); // Resolves to the root folder
+const __dirname1 = path.resolve();
 
-if (nodeEnv === "production") {
-  // Serve static files from the frontend's build directory, which is in the main folder
-  app.use(express.static(path.join(__dirname2, "../frontend/build"))); // Correct the path
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/build")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname2, "frontend", "build", "index.html")); // Correct the path here too
+    res.sendFile(path.resolve(__dirname1, "build", "index.html"));
   });
 } else {
   app.get("/", (req, res) => {

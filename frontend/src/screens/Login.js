@@ -1,39 +1,42 @@
-import React, { useState } from 'react'
-import Navbar from '../components/Navbar';
-import { useNavigate, Link } from 'react-router-dom'
+import React, { useState } from "react";
+import Navbar from "../components/Navbar";
+import { useNavigate, Link } from "react-router-dom";
+
 export default function Login() {
-  const [credentials, setCredentials] = useState({ email: "", password: "" })
-  let navigate = useNavigate()
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  let navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      // credentials: 'include',
-      // Origin:"http://localhost:3000/login",
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email: credentials.email, password: credentials.password })
+    const response = await fetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      }
+    );
 
-    });
-    const json = await response.json()
+    const json = await response.json();
     console.log(json);
     if (json.success) {
-      //save the auth toke to local storage and redirect
-      localStorage.setItem('userEmail', credentials.email)
-      localStorage.setItem('token', json.authToken)
+      // Save the auth token to local storage and redirect
+      localStorage.setItem("userEmail", credentials.email);
+      localStorage.setItem("token", json.authToken);
       navigate("/");
-
+    } else {
+      alert("Enter Valid Credentials");
     }
-    else {
-      alert("Enter Valid Credentials")
-    }
-  }
+  };
 
   const onChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value })
-  }
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
 
   return (
     <div
@@ -93,8 +96,3 @@ export default function Login() {
     </div>
   );
 }
-
-
-// , 'Accept': 'application/json',
-//         'Access-Control-Allow-Origin': 'http://localhost:3000/login', 'Access-Control-Allow-Credentials': 'true',
-//         "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE, OPTIONS'

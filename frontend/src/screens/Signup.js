@@ -13,18 +13,21 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:5000/api/auth/createuser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: credentials.name,
-        email: credentials.email,
-        password: credentials.password,
-        location: credentials.location, // Location entered by the user
-      }),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/auth/createuser`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: credentials.name,
+          email: credentials.email,
+          password: credentials.password,
+          location: credentials.location, // Location entered by the user
+        }),
+      }
+    );
 
     const json = await response.json();
     if (json.success) {

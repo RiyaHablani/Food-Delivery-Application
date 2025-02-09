@@ -7,15 +7,18 @@ export default function MyOrder() {
 
   const fetchMyOrder = async () => {
     console.log(localStorage.getItem("userEmail"));
-    await fetch("http://localhost:5000/api/auth/myOrderData", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: localStorage.getItem("userEmail"),
-      }),
-    }).then(async (res) => {
+    await fetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/auth/myOrderData`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: localStorage.getItem("userEmail"),
+        }),
+      }
+    ).then(async (res) => {
       let response = await res.json();
       await setorderData(response);
     });
@@ -48,7 +51,7 @@ export default function MyOrder() {
                       .map((item) => {
                         return item.map((arrayData) => {
                           return (
-                            <div>
+                            <div key={arrayData._id}>
                               {arrayData.Order_date ? (
                                 <div className="m-auto mt-5">
                                   {/* Display formatted date */}

@@ -1,9 +1,11 @@
 import React from "react";
 import Delete from "@material-ui/icons/Delete";
 import { useCart, useDispatchCart } from "../components/ContextReducer";
+
 export default function Cart() {
   let data = useCart();
   let dispatch = useDispatchCart();
+
   if (data.length === 0) {
     return (
       <div>
@@ -18,33 +20,30 @@ export default function Cart() {
       </div>
     );
   }
-  // const handleRemove = (index)=>{
-  //   console.log(index)
-  //   dispatch({type:"REMOVE",index:index})
-  // }
 
   const handleCheckOut = async () => {
     let userEmail = localStorage.getItem("userEmail");
-    
+
     const orderDataWithImages = data.map((item) => ({
       ...item, // Keep the existing properties
       img: item.img, // Include the image for each item
     }));
 
-    // console.log(data,localStorage.getItem("userEmail"),new Date())
-    let response = await fetch("http://localhost:5000/api/auth/orderData", {
-      // credentials: 'include',
-      // Origin:"http://localhost:3000/login",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        order_data: orderDataWithImages,
-        email: userEmail,
-        order_date: new Date().toDateString(),
-      }),
-    });
+    let response = await fetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/auth/orderData`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          order_data: orderDataWithImages,
+          email: userEmail,
+          order_date: new Date().toDateString(),
+        }),
+      }
+    );
+
     console.log("JSON RESPONSE:::::", response.status);
     if (response.status === 200) {
       dispatch({ type: "DROP" });
@@ -52,6 +51,7 @@ export default function Cart() {
   };
 
   let totalPrice = data.reduce((total, food) => total + food.price, 0);
+
   return (
     <div>
       {console.log(data)}
@@ -69,7 +69,7 @@ export default function Cart() {
           </thead>
           <tbody>
             {data.map((food, index) => (
-              <tr>
+              <tr key={index}>
                 <th scope="row">{index + 1}</th>
                 <td style={{ color: "white" }}>{food.name}</td>
                 <td style={{ color: "white" }}>{food.qty}</td>
@@ -95,8 +95,7 @@ export default function Cart() {
         </div>
         <div>
           <button className="btn bg-success mt-5 " onClick={handleCheckOut}>
-            {" "}
-            Check Out{" "}
+            Check Out
           </button>
         </div>
       </div>
