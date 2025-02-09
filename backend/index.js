@@ -5,10 +5,13 @@ require("dotenv").config(); // Load environment variables from .env file
 // Define environment variables from the .env file
 const port = process.env.PORT || 5000; // Default to 5000 if not set
 const nodeEnv = process.env.NODE_ENV || "development"; // Default to 'development' if not set
+const frontendBaseUrl =
+  process.env.VITE_REACT_APP_BACKEND_BASEURL || "http://localhost:3000"; // Access the base URL from the .env file
 
 // Log the environment variables
 console.log(`NODE_ENV: ${nodeEnv}`);
 console.log(`PORT: ${port}`);
+console.log(`Frontend Base URL: ${frontendBaseUrl}`);
 
 global.foodData = require("./db")(function call(err, data, CatData) {
   if (err) console.log(err);
@@ -20,7 +23,7 @@ const app = express();
 
 // CORS setup
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", frontendBaseUrl); // Use the frontend base URL
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -41,10 +44,10 @@ const __dirname2 = path.resolve(); // Resolves to the root folder
 
 if (nodeEnv === "production") {
   // Serve static files from the frontend's build directory, which is in the main folder
-  app.use(express.static(path.join(__dirname2, "./build"))); // Correct the path
+  app.use(express.static(path.join(__dirname2, "../frontend/build"))); // Correct the path
 
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname2, "./build", "index.html")); // Correct the path here too
+    res.sendFile(path.resolve(__dirname2, "frontend", "build", "index.html")); // Correct the path here too
   });
 } else {
   app.get("/", (req, res) => {
